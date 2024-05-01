@@ -26,27 +26,4 @@ bool UGodArenaFunctionLibrary::ApplyStaminaDeduction(AActor* DamageCauser, AActo
 	return false;
 }
 
-template<typename T>
-FTimerHandle UGodArenaFunctionLibrary::StartTimer(UObject* owner, void(T::* Function)(), float duration, bool bLoop)
-{
-	FTimerDelegate Delegate;
-	FTimerHandle OutHandle;
 
-	
-
-	//owner->GetWorld()->GetTimerManager().SetTimer(OutHandle, &T::Function, 0.1, bLoop, duration);
-
-	return OutHandle;
-}
-
-//bool UGodArenaFunctionLibrary::ApplyStaminaDeduction(AActor* DamageCauser, AActor* DamagedTarget, float StaminaAmount)
-//{
-//
-//	UAttributeComponent* comp = DamagedTarget->FindComponentByClass<UAttributeComponent>();
-//	if (!comp)
-//		return false;
-//
-//	float 
-//
-//	return false;
-//}

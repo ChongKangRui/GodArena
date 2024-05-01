@@ -16,14 +16,14 @@ class GODARENA_UE5_API UBTD_Loop : public UBTDecorator_Loop
 public:
 
 	UBTD_Loop();
+	void OnNodeActivation(FBehaviorTreeSearchData& SearchD) override;
 
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int MinLoop = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int MaxLoop = 0;
 
-
-
-	void OnNodeActivation(FBehaviorTreeSearchData& SearchD) override;
+	
 };

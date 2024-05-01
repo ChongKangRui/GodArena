@@ -17,15 +17,14 @@ public:
 	UBTTAsk_Jump();
 	EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& owner_comp, uint8* node_memory) override;
 
+	void EndTask();
+
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Height = 600.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool RotateToTarget;
-
-	void EndTask();
-	
-
 
 private:
 	float OGSpeed;

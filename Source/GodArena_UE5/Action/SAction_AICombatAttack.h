@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Action.h"
+#include "Engine/EngineTypes.h"
 #include "SAction_AICombatAttack.generated.h"
 
 /**
@@ -19,10 +20,10 @@ public:
 	
 	virtual void PlayAttackMontage(const int& combatInfoInt);
 	
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool CanMove = true;
 
-	
 protected:
 	FTimerHandle MoveHandle;
 

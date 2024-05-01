@@ -6,8 +6,6 @@
 #include "../GodsArenaCharacter.h"
 #include "../Enemy/Enemy_Base.h"
 
-
-
 void UANS_RotationToTarget::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration) {
 
     if (!MeshComp->GetOwner())
@@ -16,11 +14,8 @@ void UANS_RotationToTarget::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimS
     owner = Cast<AGodsArenaCharacter>(MeshComp->GetOwner());
     AEnemy_Base* temp_Enemy = Cast<AEnemy_Base>(MeshComp->GetOwner());
 
-   // owner->DebugPrint(owner->GetName());
-
     if (temp_Enemy) {
         Target = temp_Enemy->Target;
-       // owner->DebugPrint("GotTarget?");
         return;
     }
 
@@ -32,8 +27,6 @@ void UANS_RotationToTarget::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimS
 void UANS_RotationToTarget::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime)
 {
     Super::NotifyTick(MeshComp, Animation, FrameDeltaTime);
-
-   
 
     if (Target && owner) {
        

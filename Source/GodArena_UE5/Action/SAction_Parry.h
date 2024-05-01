@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Action.h"
 #include "../StructAndEnum.h"
+#include "Engine/EngineTypes.h"
 #include "SAction_Parry.generated.h"
 
 /**
@@ -19,6 +20,7 @@ public:
 	void OnActionBegin_Implementation() override;
 	void OnActionEnd_Implementation() override;
 
+public:
 	//Use to end parry state early
 	UPROPERTY(EditDefaultsOnly)
 		float ParryDurationOffset = 1.0f;

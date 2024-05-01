@@ -10,11 +10,10 @@
 
 class USAction;
 class AGodsArenaCharacter;
+class UDataTable;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAction, AGodsArenaCharacter*, OwnerCharacter, USAction*, CurrentAction);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FActionInitializationFinished);
-
-class UDataTable;
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class GODARENA_UE5_API UActionComponent : public UActorComponent
@@ -24,20 +23,7 @@ class GODARENA_UE5_API UActionComponent : public UActorComponent
 public:
 	// Sets default values for this component's properties
 	UActionComponent();
-public:
-	UPROPERTY(BlueprintAssignable)
-	FAction OnActionBegin;
 
-	UPROPERTY(BlueprintAssignable)
-	FAction OnActionEnd;
-
-	UPROPERTY(BlueprintAssignable)
-	FActionInitializationFinished OnInitializaActionFinished;
-
-	UPROPERTY(BlueprintReadWrite)
-	bool AbandomAllAction = false;
-
-public:
 	UFUNCTION(BlueprintCallable, meta = (ToolTip = "This will call the OnActionBegin as well"))
 	bool ExecuteAction(ECombatType actionType);
 
@@ -75,10 +61,24 @@ public:
 			currentAction = nullptr;
 	};
 
-
 	void ActionInitialization(AGodsArenaCharacter* ownerRef);
 
+public:
+	UPROPERTY(BlueprintAssignable)
+	FAction OnActionBegin;
 
+	UPROPERTY(BlueprintAssignable)
+	FAction OnActionEnd;
+
+	UPROPERTY(BlueprintAssignable)
+	FActionInitializationFinished OnInitializaActionFinished;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool AbandomAllAction = false;
+
+private:
+	UFUNCTION()
+	void OnCharacterDeath(ECharacterState state);
 
 private:
 	AGodsArenaCharacter* owner;
@@ -87,9 +87,6 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	TMap<ECombatType, class USAction*> actionList;
 
-private:
-	UFUNCTION()
-	void OnCharacterDeath(ECharacterState state);
 
 	
 };

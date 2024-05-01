@@ -20,8 +20,7 @@ void USAction_8WaysDodge_Enemy::OnActionBegin_Implementation()
 	Super::OnActionBegin_Implementation();
 
 	EnemyBase->GetCharacterMovement()->bUseControllerDesiredRotation = false;
-	//ownerCharacter->GetCharacterMovement()->bOrientRotationToMovement = true;
-
+	
 	FEnvQueryRequest DodgeQueryRequest = FEnvQueryRequest(EnemyBase->DodgeEQS, EnemyBase);
 
 	DodgeQueryRequest.Execute(
@@ -46,8 +45,6 @@ void USAction_8WaysDodge_Enemy::OnQueryFinished(TSharedPtr<FEnvQueryResult> resu
 		if (temp_Montage) {
 			float duration = ownerCharacter->PlayAnimMontage(temp_Montage, dodgeAnimRate);
 			StartTimer(this, &USAction_8WaysDodge_Enemy::OnActionEnd_Implementation,false, duration);
-
-
 		}
 		else
 			OnActionEnd_Implementation();

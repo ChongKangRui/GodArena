@@ -15,8 +15,6 @@ void USAction_Ability_WeaponRangeExtend::OnActionBegin_Implementation()
 
 	Super::OnActionBegin_Implementation();
 
-	
-
 	USAction_Ability_WeaponRangeExtend* temp_Action = Cast<USAction_Ability_WeaponRangeExtend>(ownerCharacter->actionComp->GetAction(DisableBuffCombatType));
 	if (temp_Action && IsTimerActive(temp_Action->BuffTimerHandle)) {
 		ClearTimer(temp_Action->BuffTimerHandle);
@@ -31,7 +29,7 @@ void USAction_Ability_WeaponRangeExtend::OnActionBegin_Implementation()
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString("Warning: Invalid Weapon"));
 	}
 
-	//ownerCharacter->weapon->TrailActivated = true;
+	//If not extend weapon attack range forever, then stop the timer
 	if (!ForeverExtendWeapon) {
 		ClearTimer(BuffTimerHandle);
 		FTimerDelegate temp_Delegate;

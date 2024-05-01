@@ -17,6 +17,20 @@ class GODARENA_UE5_API APlayerCharacter : public AGodsArenaCharacter
 public:
 	APlayerCharacter();
 
+	void SetCharacterState(ECharacterState stateToChange) override;
+
+	UFUNCTION(BlueprintPure)
+	FVector GetPlayerLastInputMovementVector();
+
+	UFUNCTION(BlueprintPure)
+	FVector2D GetPlayerLastInputMovementValue();
+
+	/** Returns CameraBoom subobject **/
+	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+	/** Returns FollowCamera subobject **/
+	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+public:
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
@@ -24,9 +38,6 @@ public:
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UTargetingComponent* TargetComponent;
 
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -44,24 +55,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TArray<ECharacterState> MovementAllowState = {ECharacterState::Idle, ECharacterState::Moving, ECharacterState::Defending};
 
-public:
-	void SetCharacterState(ECharacterState stateToChange) override;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTargetingComponent* TargetComponent;
 
-	UFUNCTION(BlueprintPure)
-	FVector GetPlayerLastInputMovementVector();
-
-	UFUNCTION(BlueprintPure)
-	FVector2D GetPlayerLastInputMovementValue();
-
-	/** Returns CameraBoom subobject **/
-	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
-	/** Returns FollowCamera subobject **/
-	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 protected:
 
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
-
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
 
@@ -71,8 +71,6 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	// Begin Play
 	virtual void BeginPlay();
-
-	virtual void Tick(float DeltaTime);
 
 private:
 	float InputValueX = 0;

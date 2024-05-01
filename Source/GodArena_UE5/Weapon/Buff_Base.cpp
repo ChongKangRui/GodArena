@@ -51,10 +51,3 @@ void ABuff_Base::BeginPlay()
 	}
 }
 
-// Called every frame
-void ABuff_Base::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-

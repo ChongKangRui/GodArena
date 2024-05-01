@@ -16,10 +16,7 @@ EBTNodeResult::Type UBTTask_ChangeState::ExecuteTask(UBehaviorTreeComponent& own
 	auto const aiController = owner_comp.GetAIOwner();
 		auto const enemy = Cast<AGodsArenaCharacter>(aiController->GetPawn());
 
-	
 	enemy->SetCharacterState(StateToChange);
 
-
 	return EBTNodeResult::Succeeded;
-
 }

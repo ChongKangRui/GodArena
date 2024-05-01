@@ -15,171 +15,30 @@
 // Sets default values for this component's properties
 UTargetingComponent::UTargetingComponent() : DisableMeshRotationState({ ECharacterState::Stun, ECharacterState::KnockOut, ECharacterState::Executed, ECharacterState::Dodging })
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
-	
 }
 
-void UTargetingComponent::ToggleTarget()
+void UTargetingComponent::BeginPlay()
 {
-	if (!IsTargeted)
-		BeginTarget();
-	else
-		EndTarget();
+	Super::BeginPlay();
 
-}
-
-void UTargetingComponent::BeginTarget()
-{
-
-	if (!player || player->GetCharacterState() == ECharacterState::Death)
+	player = Cast<APlayerCharacter>(GetOwner());
+	if (player)
 	{
-		player->DebugPrint("Player invalid");
-		return;
-	}
-
-	float temp_SmallestAngle = 10000;
-	AGodsArenaCharacter* temp_Target = nullptr;
-
-	//player->CameraBoom->bUsePawnControlRotation = false;
-
-
-	for (auto Target : TargetedList)
-	{
-		if (!Target)
-			continue;
-
-		if (Target->GetCharacterState() == ECharacterState::Death)
-		{
-			
-			TargetedList.Remove(Target);
-			continue;
-		}
-
-
-		//Get direction from potential switch target
-		FVector temp_Dir1 = Target->GetActorLocation() - player->GetActorLocation();
-
-		//Get forward vector of the player, use to determine the angle
-		FVector temp_Dir2 = player->GetActorForwardVector();
-
-		temp_Dir1.Normalize();
-		temp_Dir2.Normalize();
-
-		//Get angle
-		float temp_Radian = FMath::Acos(FVector::DotProduct(temp_Dir2, temp_Dir1));
-		float temp_Angle = FMath::RadiansToDegrees(temp_Radian);
-
-		if (temp_Angle < temp_SmallestAngle)
-		{
-			temp_SmallestAngle = temp_Angle;
-			temp_Target = Target;
-		}
-
-	}
-
-	CurrentTarget = temp_Target;
-	if (!CurrentTarget)
-		return;
-
-	SetTargetingPointWidget();
-
-	if (!GetWorld()->GetTimerManager().IsTimerActive(TargetingHandle))
-	{
-		FTimerDelegate temp_delegate;
-		temp_delegate.BindWeakLambda(this, [this]()
-			{
-				TargetingTick();
-			});
-		player->DebugPrint("tick targeting activated");
-		IsTargeted = true;
-		GetWorld()->GetTimerManager().SetTimer(TargetingHandle, temp_delegate, GetWorld()->GetDeltaSeconds(), true, 0);
+		player->OnStateChange.AddDynamic(this, &UTargetingComponent::OnPlayerDeath);
 	}
 }
 
-void UTargetingComponent::EndTarget()
+void UTargetingComponent::AddTarget(AGodsArenaCharacter* Target)
 {
-	GetWorld()->GetTimerManager().ClearTimer(TargetingHandle);
-	IsTargeted = false;
-
-
-	if (CurrentPointWidget)
-		CurrentPointWidget->SetVisibility(false);
-
-	CurrentTarget = nullptr;
-	CurrentPointWidget = nullptr;
-
-	player->GetCharacterMovement()->bOrientRotationToMovement = true;
-	player->GetCharacterMovement()->bUseControllerDesiredRotation = false;
+	if (!TargetedList.Contains(Target))
+		TargetedList.Add(Target);
 }
 
-void UTargetingComponent::TargetingTick()
+void UTargetingComponent::RemoveTarget(AGodsArenaCharacter* Target)
 {
-	if (!CurrentTarget || CurrentTarget->GetCharacterState() == ECharacterState::Death) {
-		EndTarget();
-		//BeginTarget();
-		return;
-	}
-
-	FVector direction = CurrentTarget->GetActorLocation() - player->GetActorLocation();
-	bool IsDodging = (player->GetCharacterState() == ECharacterState::Dodging);
-	if (dodgeSetting.RotateToEnemyAfterDodge)
-	{
-		if (!IsDodging)
-		{
-			player->GetCharacterMovement()->bOrientRotationToMovement = false;
-			player->GetCharacterMovement()->bUseControllerDesiredRotation = true;
-		}
-
-	}
-	else
-	{
-		float ownerYaw = player->GetActorRotation().Yaw;
-		float controllerYaw = player->GetController()->GetControlRotation().Yaw;
-		if (!IsDodging)
-		{
-			if ((ownerYaw - controllerYaw) >= dodgeSetting.ReFollowAngleMin && (ownerYaw - controllerYaw) <= dodgeSetting.ReFollowAngleMax)
-			{
-
-				player->GetCharacterMovement()->bOrientRotationToMovement = false;
-				player->GetCharacterMovement()->bUseControllerDesiredRotation = true;
-			}
-		}
-	}
-
-
-	//Prevent mesh keep rotating with controller rotation
-	if (DisableMeshRotationState.Contains(player->GetCharacterState())) {
-		player->GetCharacterMovement()->bUseControllerDesiredRotation = false;
-	}
-	else {
-		if (!player->GetCharacterMovement()->bUseControllerDesiredRotation)
-			player->GetCharacterMovement()->bUseControllerDesiredRotation = true;
-	}
-
-	direction.Normalize();
-
-	float YawRadian = FMath::Atan2(direction.Y, direction.X);
-	float YawAngle = FMath::RadiansToDegrees(YawRadian);
-
-	//Get Pitch Rotation
-	float PitchRadian = FMath::Atan2(direction.Z, direction.Size2D());
-	float PitchAngle = FMath::RadiansToDegrees(PitchRadian);
-	float pitch = FMath::Clamp(PitchAngle, -30, 30);
-
-	//FVector debugVec = FVector(PitchRadian, YawRadian, 0);
-
-	FRotator TargetRotation = FRotator(0, YawAngle, 0.0f);
-
-	FRotator FinalRotation = FMath::RInterpTo(player->GetController()->GetControlRotation(),
-		TargetRotation, GetWorld()->GetDeltaSeconds(), RotationInterpSpeed);
-
-	//player->DebugPrint(FinalRotation.ToString());
-
-	player->Controller->SetControlRotation(FinalRotation);
+	if (TargetedList.Contains(Target))
+		TargetedList.Remove(Target);
 }
 
 void UTargetingComponent::SwitchTarget(bool left)
@@ -271,7 +130,158 @@ void UTargetingComponent::SwitchTarget(bool left)
 	SetTargetingPointWidget();
 }
 
+void UTargetingComponent::ToggleTarget()
+{
+	if (!IsTargeted)
+		BeginTarget();
+	else
+		EndTarget();
+}
 
+void UTargetingComponent::BeginTarget()
+{
+	if (!player || player->GetCharacterState() == ECharacterState::Death)
+	{
+		player->DebugPrint("Player Reference invalid");
+		return;
+	}
+
+	float temp_SmallestAngle = 10000;
+	AGodsArenaCharacter* temp_Target = nullptr;
+
+	for (auto Target : TargetedList)
+	{
+		if (!Target)
+			continue;
+
+		if (Target->GetCharacterState() == ECharacterState::Death)
+		{
+			
+			TargetedList.Remove(Target);
+			continue;
+		}
+
+		//Get direction from potential switch target
+		FVector temp_Dir1 = Target->GetActorLocation() - player->GetActorLocation();
+
+		//Get forward vector of the player, use to determine the angle
+		FVector temp_Dir2 = player->GetActorForwardVector();
+
+		temp_Dir1.Normalize();
+		temp_Dir2.Normalize();
+
+		//Get angle
+		float temp_Radian = FMath::Acos(FVector::DotProduct(temp_Dir2, temp_Dir1));
+		float temp_Angle = FMath::RadiansToDegrees(temp_Radian);
+
+		if (temp_Angle < temp_SmallestAngle)
+		{
+			temp_SmallestAngle = temp_Angle;
+			temp_Target = Target;
+		}
+
+	}
+
+	CurrentTarget = temp_Target;
+	if (!CurrentTarget)
+		return;
+
+	SetTargetingPointWidget();
+
+	//Start the targeting rotation tick
+	if (!GetWorld()->GetTimerManager().IsTimerActive(TargetingHandle))
+	{
+		FTimerDelegate temp_delegate;
+		temp_delegate.BindWeakLambda(this, [this]()
+			{
+				TargetingTick();
+			});
+		player->DebugPrint("tick targeting activated");
+		IsTargeted = true;
+		GetWorld()->GetTimerManager().SetTimer(TargetingHandle, temp_delegate, GetWorld()->GetDeltaSeconds(), true, 0);
+	}
+}
+
+void UTargetingComponent::EndTarget()
+{
+	GetWorld()->GetTimerManager().ClearTimer(TargetingHandle);
+	IsTargeted = false;
+
+	if (CurrentPointWidget)
+		CurrentPointWidget->SetVisibility(false);
+
+	CurrentTarget = nullptr;
+	CurrentPointWidget = nullptr;
+
+	player->GetCharacterMovement()->bOrientRotationToMovement = true;
+	player->GetCharacterMovement()->bUseControllerDesiredRotation = false;
+}
+
+void UTargetingComponent::TargetingTick()
+{
+	if (!CurrentTarget || CurrentTarget->GetCharacterState() == ECharacterState::Death) {
+		EndTarget();
+		//BeginTarget();
+		return;
+	}
+
+	FVector direction = CurrentTarget->GetActorLocation() - player->GetActorLocation();
+	bool IsDodging = (player->GetCharacterState() == ECharacterState::Dodging);
+	if (dodgeSetting.RotateToEnemyAfterDodge)
+	{
+		if (!IsDodging)
+		{
+			player->GetCharacterMovement()->bOrientRotationToMovement = false;
+			player->GetCharacterMovement()->bUseControllerDesiredRotation = true;
+		}
+
+	}
+	else
+	{
+		float ownerYaw = player->GetActorRotation().Yaw;
+		float controllerYaw = player->GetController()->GetControlRotation().Yaw;
+		if (!IsDodging)
+		{
+			if ((ownerYaw - controllerYaw) >= dodgeSetting.ReFollowAngleMin && (ownerYaw - controllerYaw) <= dodgeSetting.ReFollowAngleMax)
+			{
+
+				player->GetCharacterMovement()->bOrientRotationToMovement = false;
+				player->GetCharacterMovement()->bUseControllerDesiredRotation = true;
+			}
+		}
+	}
+
+
+	//Prevent mesh keep rotating with controller rotation
+	if (DisableMeshRotationState.Contains(player->GetCharacterState())) {
+		player->GetCharacterMovement()->bUseControllerDesiredRotation = false;
+	}
+	else {
+		if (!player->GetCharacterMovement()->bUseControllerDesiredRotation)
+			player->GetCharacterMovement()->bUseControllerDesiredRotation = true;
+	}
+
+	direction.Normalize();
+
+	float YawRadian = FMath::Atan2(direction.Y, direction.X);
+	float YawAngle = FMath::RadiansToDegrees(YawRadian);
+
+	//Get Pitch Rotation
+	float PitchRadian = FMath::Atan2(direction.Z, direction.Size2D());
+	float PitchAngle = FMath::RadiansToDegrees(PitchRadian);
+	float pitch = FMath::Clamp(PitchAngle, -30, 30);
+
+	//FVector debugVec = FVector(PitchRadian, YawRadian, 0);
+
+	FRotator TargetRotation = FRotator(0, YawAngle, 0.0f);
+
+	FRotator FinalRotation = FMath::RInterpTo(player->GetController()->GetControlRotation(),
+		TargetRotation, GetWorld()->GetDeltaSeconds(), RotationInterpSpeed);
+
+	//player->DebugPrint(FinalRotation.ToString());
+
+	player->Controller->SetControlRotation(FinalRotation);
+}
 
 void UTargetingComponent::SetTargetingPointWidget()
 {
@@ -280,11 +290,8 @@ void UTargetingComponent::SetTargetingPointWidget()
 	{
 		CurrentPointWidget = Cast<USceneComponent>(temp_PointWidgetAC);
 		if (CurrentPointWidget)
-			//player->DebugPrint("Invalid scene");
-		//else
 		{
 			CurrentPointWidget->SetVisibility(true);
-			//player->DebugPrint("valid scene");
 		}
 	}
 }
@@ -296,28 +303,5 @@ void UTargetingComponent::OnPlayerDeath(ECharacterState state)
 }
 
 
-void UTargetingComponent::AddTarget( AGodsArenaCharacter* Target)
-{
-	if (!TargetedList.Contains(Target))
-		TargetedList.Add(Target);
-}
-
-void UTargetingComponent::RemoveTarget( AGodsArenaCharacter* Target)
-{
-	if (TargetedList.Contains(Target))
-		TargetedList.Remove(Target);
-}
-
-// Called when the game starts
-void UTargetingComponent::BeginPlay()
-{
-	Super::BeginPlay();
-
-	player = Cast<APlayerCharacter>(GetOwner());
-	if (player)
-	{
-		player->OnStateChange.AddDynamic(this, &UTargetingComponent::OnPlayerDeath);
-	}
-}
 
 

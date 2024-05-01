@@ -8,31 +8,22 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Animation/AnimMontage.h"
 #include "Components/ActionComponent.h"
-//#include "DitItHitActorComponent.h"
+#include "Components/AttributeComponent.h"
 #include "Engine/Datatable.h"
 #include "Weapon/BP_WeaponBase.h"
-#include "Components/AttributeComponent.h"
 #include "Action/Action.h"
-#include "Engine/DataTable.h"
 #include "AIController.h"
-
-
-//////////////////////////////////////////////////////////////////////////
-// AGodsArenaCharacter
 
 AGodsArenaCharacter::AGodsArenaCharacter() : state(ECharacterState::Idle)
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
-
-
 	// Don't rotate when the controller rotates. Let that just affect the camera.
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 
-	// Configure character movement
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f); // ...at this rotation rate
 	GetCharacterMovement()->JumpZVelocity = 600.f;
@@ -40,15 +31,58 @@ AGodsArenaCharacter::AGodsArenaCharacter() : state(ECharacterState::Idle)
 
 	actionComp = CreateDefaultSubobject<UActionComponent>(TEXT("ActionComponent"));
 	attributeComp = CreateDefaultSubobject<UAttributeComponent>(TEXT("AttributeComponent"));
-	//DIHComp = CreateDefaultSubobject<UDitItHitActorComponent>(TEXT("AC Did It Hit"));
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 	DataTableInitialization();
 }
 
-//////////////////////////////////////////////////////////////////////////
-// Input
+void AGodsArenaCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+	CharacterTypeInitialization();
+
+	//Get Weapon Component
+	UChildActorComponent* WeaponComp = FindComponentByClass<UChildActorComponent>();
+	if (WeaponComp && WeaponComp->GetChildActor())
+	{
+		weapon = Cast<ABP_WeaponBase>(WeaponComp->GetChildActor());
+		if (weapon) {
+			weapon->OnWeaponTraceHit.AddDynamic(this, &AGodsArenaCharacter::BindOnWeaponTraceHit);
+		}
+	}
+}
+
+void AGodsArenaCharacter::DataTableInitialization()
+{
+	//Get datatable
+	static ConstructorHelpers::FObjectFinder<UDataTable> DataTablePath(TEXT("/Script/Engine.DataTable'/Game/Blueprint/Blueprint/DataAsset/DT_Character.DT_Character'"));
+	DataTableAsset = DataTablePath.Object;
+}
+
+void AGodsArenaCharacter::CharacterTypeInitialization()
+{
+	if (!DataTableAsset)
+	{
+		return;
+	}
+	FString characterTypeString = UEnum::GetValueAsString(ownerType);
+	characterTypeString.RemoveFromStart("ECharacterType::");
+
+	characterInfo = DataTableAsset->FindRow<FCharacterInfo>(FName(characterTypeString), "");
+
+	//Set action info from character info
+	if (!characterInfo)
+	{
+		DebugPrint("Failed to get character info = " + characterTypeString);
+		return;
+	}
+
+	ActionInfoList = characterInfo->ActionInfo;
+
+	attributeComp->InitializeVariable(this);
+	actionComp->ActionInitialization(this);
+}
 
 void AGodsArenaCharacter::SetCharacterState(ECharacterState State)
 {
@@ -58,15 +92,10 @@ void AGodsArenaCharacter::SetCharacterState(ECharacterState State)
 		OnStateChange.Broadcast(this->state);
 		return;
 	}
-
-	//if(this->state == ECharacterState::Stun ||)
-	
 	if (this->state != State) {
 		this->state = State;
 		OnStateChange.Broadcast(this->state);
 	}
-	
-	
 }
 
 void AGodsArenaCharacter::SetExecutedState(EExecutedState Executed_State)
@@ -101,11 +130,7 @@ void AGodsArenaCharacter::TerminateCharacter()
 	actionComp->TerminateAllAction();
 	GetWorld()->GetTimerManager().ClearAllTimersForObject(attributeComp);
 	GetWorld()->GetTimerManager().ListTimers();
-
-	/*attributeComp->SetActive(false);
-	actionComp->SetActive(false);*/
 }
-
 
 void AGodsArenaCharacter::Death()
 {
@@ -127,13 +152,11 @@ void AGodsArenaCharacter::StunCharacter(const float& duration)
 
 		SetCharacterState(ECharacterState::Stun);
 		actionComp->TerminateCurrentAction();
-		//actionComp->TerminateAction(ECombatType::NormalAttack);
 		StopAnimMontage(GetCurrentMontage());
 
 		FTimerDelegate temp_delegate;
 		FTimerHandle temp_timerHandle;
-		//float temp_StunDuration = GetCharacterInfo().StunDuration;
-		//Bind event by lamdba expression
+
 		temp_delegate.BindWeakLambda(this,[this]()
 			{
 				SetParryingState(EParryingState::None);
@@ -173,56 +196,3 @@ void AGodsArenaCharacter::BindOnWeaponTraceHit(AGodsArenaCharacter* HitCharacter
 	}
 }
 
-void AGodsArenaCharacter::DataTableInitialization()
-{
-	//Get datatable
-	static ConstructorHelpers::FObjectFinder<UDataTable> DataTablePath(TEXT("/Script/Engine.DataTable'/Game/Blueprint/Blueprint/DataAsset/DT_Character.DT_Character'"));
-	DataTableAsset = DataTablePath.Object;
-
-
-}
-
-void AGodsArenaCharacter::CharacterTypeInitialization()
-{
-	if (!DataTableAsset)
-	{
-		return;
-	}
-	FString characterTypeString = UEnum::GetValueAsString(ownerType);
-	characterTypeString.RemoveFromStart("ECharacterType::");
-	
-	characterInfo = DataTableAsset->FindRow<FCharacterInfo>(FName(characterTypeString), "");
-
-	//Set action info from character info
-	if (!characterInfo)
-	{
-		DebugPrint("Failed to get character info = " + characterTypeString);
-		return;
-	}
-
-	//
-	ActionInfoList = characterInfo->ActionInfo;
-	
-	attributeComp->InitializeVariable(this);
-	actionComp->ActionInitialization(this);
-}
-
-void AGodsArenaCharacter::BeginPlay()
-{
-	Super::BeginPlay();
-	
-	//Initialize which character type
-	CharacterTypeInitialization();
-
-	//Get Weapon Component
-	UChildActorComponent* WeaponComp = FindComponentByClass<UChildActorComponent>();
-	if (WeaponComp && WeaponComp->GetChildActor())
-	{
-		weapon = Cast<ABP_WeaponBase>(WeaponComp->GetChildActor());
-		if (weapon) {
-			weapon->OnWeaponTraceHit.AddDynamic(this, &AGodsArenaCharacter::BindOnWeaponTraceHit);
-		
-		}
-
-	}
-}

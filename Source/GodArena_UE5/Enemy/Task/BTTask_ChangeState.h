@@ -18,6 +18,7 @@ public:
 	UBTTask_ChangeState();
 	EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& owner_comp, uint8* node_memory) override;
 
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FBlackboardKeySelector EnumKey;
 

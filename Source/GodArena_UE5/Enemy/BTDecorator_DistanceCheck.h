@@ -18,6 +18,7 @@ public:
 	EBlackboardNotificationResult OnBlackboardKeyValueChange(const UBlackboardComponent& Blackboard, FBlackboard::FKey ChangedKeyID) override;
 	bool CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const override;
 
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float MaxDistance;
 

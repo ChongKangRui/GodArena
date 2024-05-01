@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "../StructAndEnum.h"
+#include "../GodsArenaCharacter.h"
 #include "AttributeComponent.generated.h"
 
 
@@ -21,39 +22,6 @@ class GODARENA_UE5_API UAttributeComponent : public UActorComponent
 public:
 	// Sets default values for this component's properties
 	UAttributeComponent();
-
-	UPROPERTY(BlueprintAssignable)
-	FOnDamaged OnDamaged;
-
-	UPROPERTY(BlueprintAssignable, meta = (ToolTip = "Only work for character who have defending mode for stamina deduction"))
-	FOnDamaged OnStaminaDamaged;
-
-	UPROPERTY(BlueprintAssignable)
-	FOnStaminaCost OnStaminaDeduct;
-
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ToolTip = "Abandone hit reaction when character state is one of these state"))
-	TArray<ECharacterState> HitReactionAbandonState = { ECharacterState::KnockOut, ECharacterState::Executed,
-		ECharacterState::Stun, ECharacterState::Executing, ECharacterState::SkillExecuting, ECharacterState::Dodging, ECharacterState::Parrying };
-
-	UPROPERTY(EditDefaultsOnly, meta = (ToolTip = "Ignore damage when character state is one of these state"))
-	TArray<ECharacterState> DamageIgnoredState = { ECharacterState::KnockOut, ECharacterState::Executing };
-
-	UPROPERTY(EditDefaultsOnly, meta = (ToolTip = "Stop stamina regen when character state is one of these state"))
-	TArray<ECharacterState> StaminaRegenState = { ECharacterState::Idle, ECharacterState::Moving,
-		ECharacterState::KnockOut, ECharacterState::Stun, ECharacterState::Executed };
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ToolTip = "speed per frame"))
-	float RegenStaminaSpeed = 0.3f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ToolTip = "avoid impulse"))
-	bool NoImpulseApply = false;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FVector BloodSpawnUpOffset = FVector(0, 0, 100.0f);
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	ECharacterState hitEndState = ECharacterState::Idle;
 
 	UFUNCTION(BlueprintPure)
 	const float GetMaxHealth() {
@@ -104,6 +72,40 @@ public:
 
 	//Initialize from datatable
 	void InitializeVariable(TObjectPtr<AGodsArenaCharacter> ownerRef);
+
+
+public:
+	UPROPERTY(BlueprintAssignable)
+	FOnDamaged OnDamaged;
+
+	UPROPERTY(BlueprintAssignable, meta = (ToolTip = "Only work for character who have defending mode for stamina deduction"))
+	FOnDamaged OnStaminaDamaged;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnStaminaCost OnStaminaDeduct;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ToolTip = "Abandone hit reaction when character state is one of these state"))
+	TArray<ECharacterState> HitReactionAbandonState = { ECharacterState::KnockOut, ECharacterState::Executed,
+		ECharacterState::Stun, ECharacterState::Executing, ECharacterState::SkillExecuting, ECharacterState::Dodging, ECharacterState::Parrying };
+
+	UPROPERTY(EditDefaultsOnly, meta = (ToolTip = "Ignore damage when character state is one of these state"))
+	TArray<ECharacterState> DamageIgnoredState = { ECharacterState::KnockOut, ECharacterState::Executing };
+
+	UPROPERTY(EditDefaultsOnly, meta = (ToolTip = "Stop stamina regen when character state is one of these state"))
+	TArray<ECharacterState> StaminaRegenState = { ECharacterState::Idle, ECharacterState::Moving,
+		ECharacterState::KnockOut, ECharacterState::Stun, ECharacterState::Executed };
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ECharacterState hitEndState = ECharacterState::Idle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ToolTip = "speed per frame"))
+	float RegenStaminaSpeed = 0.3f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ToolTip = "avoid impulse"))
+	bool NoImpulseApply = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector BloodSpawnUpOffset = FVector(0, 0, 100.0f);
 private:
 	UFUNCTION()
 	void OnCharacterStateBind(ECharacterState state);
@@ -111,6 +113,7 @@ private:
 	void ApplyStaminaRegen();
 	void SpawnBloodVFX();
 
+private:
 	float CurrentHealth;
 	float MaxHealth;
 	float CurrentStamina;
@@ -120,7 +123,7 @@ private:
 	bool IsEnemy;
 	bool StaminaRegenActivated;
 
-	 TObjectPtr<class AGodsArenaCharacter> ownerCharacter;
+	TObjectPtr<class AGodsArenaCharacter> ownerCharacter;
 
 	FTimerHandle HitReactionHandle;
 	FTimerHandle StaminaRegenHandle;

@@ -26,9 +26,6 @@ void USAction_AIDodge::OnActionBegin_Implementation()
 		EEnvQueryRunMode::SingleResult,
 		this,
 		&USAction_AIDodge::OnQueryFinished);
-
-
-
 }
 
 void USAction_AIDodge::OnActionEnd_Implementation()

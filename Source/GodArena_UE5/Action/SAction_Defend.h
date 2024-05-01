@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Action.h"
+#include "Engine/EngineTypes.h"
 #include "SAction_Defend.generated.h"
 
 /**
@@ -19,12 +20,13 @@ public:
 	void OnActionBegin_Implementation() override;
 	void OnActionEnd_Implementation() override;
 
+	UFUNCTION()
+	void HitReactionBind(AActor* Instigator, float Amount, FAttackDebuff debuff);
+
+public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		bool Blocking;
 	
-	UFUNCTION()
-	void HitReactionBind(AActor* Instigator,float Amount,FAttackDebuff debuff);
-
 protected:
 	FTimerHandle Parry_Handle;
 	FTimerHandle HitReaction_Handle;

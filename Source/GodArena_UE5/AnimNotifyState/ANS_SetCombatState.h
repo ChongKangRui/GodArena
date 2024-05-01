@@ -14,15 +14,8 @@ UCLASS()
 class GODARENA_UE5_API UANS_SetCombatState : public UAnimNotifyState
 {
 	GENERATED_BODY()
-public:
-	//virtual 
-	UPROPERTY(EditAnywhere)
-		ECombatState BeginState;
-	UPROPERTY(EditAnywhere)
-		ECombatState EndState;
-	UPROPERTY(EditAnywhere)
-		ECombatType combatType = ECombatType::NormalAttack;
 
+protected:
 	void CombatContinuation(USkeletalMeshComponent* MeshComp, bool isCombatContinue);
 
 	virtual bool ShouldFireInEditor() {
@@ -31,6 +24,16 @@ public:
 	virtual void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration) override;
 	virtual void NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
 
+protected:
+	//virtual 
+	UPROPERTY(EditAnywhere)
+		ECombatState BeginState;
+	UPROPERTY(EditAnywhere)
+		ECombatState EndState;
+	UPROPERTY(EditAnywhere)
+		ECombatType combatType = ECombatType::NormalAttack;
+
+	
 	
 
 	

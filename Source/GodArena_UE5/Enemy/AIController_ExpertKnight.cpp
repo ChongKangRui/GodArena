@@ -29,6 +29,4 @@ void AAIController_ExpertKnight::BlackBoardValueTick()
 
 	uint8 temp_CanParry = static_cast<uint8>(ownerCharacter->Target->GetParryingState());
 	blackboardComp->SetValueAsEnum("EnemyParryState", temp_CanParry);
-
-
 }

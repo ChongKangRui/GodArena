@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Action.h"
+#include "Engine/EngineTypes.h"
 #include "SAction_8WaysDodge_Player.generated.h"
 
 /**
@@ -13,6 +14,11 @@ UCLASS()
 class GODARENA_UE5_API USAction_8WaysDodge_Player : public USAction
 {
 	GENERATED_BODY()
+
+public:
+	virtual void Init(TObjectPtr <class AGodsArenaCharacter> owner, FCharacterCombat combatStruct) override;
+	virtual void OnActionBegin_Implementation() override;
+	virtual void OnActionEnd_Implementation() override;
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ToolTip = "Whether wan to increase the dodge distance or not"))
@@ -30,16 +36,10 @@ public:
 		{{-1, -1}, 6},{{1, -1}, 7}
 	};
 
-
-	virtual void Init(TObjectPtr <class AGodsArenaCharacter> owner, FCharacterCombat combatStruct) override;
-	virtual void OnActionBegin_Implementation() override;
-	virtual void OnActionEnd_Implementation() override;
-
+private:
+	int GetClosestAngleMontageInt(FVector2D inputDir);
 
 private:
-
-	
-	int GetClosestAngleMontageInt(FVector2D inputDir);
 	FTimerHandle DodgeFinishedHandle;
 	class APlayerCharacter* player;
 	float alpha;

@@ -7,9 +7,6 @@
 #include "../../StructAndEnum.h"
 #include "BTTask_ExecuteAction.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class GODARENA_UE5_API UBTTask_ExecuteAction : public UBTTask_BlackboardBase
 {
@@ -18,15 +15,15 @@ class GODARENA_UE5_API UBTTask_ExecuteAction : public UBTTask_BlackboardBase
 public:
 	UBTTask_ExecuteAction();
 
-	EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& owner_comp, uint8* node_memory) override;
-	EBTNodeResult::Type AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
-
 	//Alway make sure it is a ufunction in order to bind dynamic delegate
 	UFUNCTION()
 	void OnActionEndBind(class AGodsArenaCharacter* OwnerCharacter, class USAction* CurrentAction);
-	void EndTask();
 
+	EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& owner_comp, uint8* node_memory) override;
+	EBTNodeResult::Type AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
+	void EndTask();
 	
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		ECombatType CombatType;
 

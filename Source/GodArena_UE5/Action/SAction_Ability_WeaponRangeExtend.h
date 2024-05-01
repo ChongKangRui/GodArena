@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "SAction_CombatAttack.h"
+#include "Engine/EngineTypes.h"
 #include "SAction_Ability_WeaponRangeExtend.generated.h"
 
 /**
@@ -14,15 +15,14 @@ class GODARENA_UE5_API USAction_Ability_WeaponRangeExtend : public USAction_Comb
 {
 	GENERATED_BODY()
 public:
-	//~USAction_Ability_WeaponRangeExtend();
-
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ToolTip = "In Relative position"))
-	FVector ExtendedWeaponEndPosition = FVector(0,0, 300.0);
-
 	virtual void OnActionBegin_Implementation() override;
 	virtual void OnActionEnd_Implementation() override;
 	virtual void CombatResetTimer() override;
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ToolTip = "In Relative position"))
+	FVector ExtendedWeaponEndPosition = FVector(0, 0, 300.0);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ToolTip = "The weapon extended buff end duration"))
 	float BuffEndDuration = 3.0f;
@@ -33,7 +33,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ToolTip = "Prevent buff stuck"))
 	ECombatType DisableBuffCombatType;
 
+protected:
 	FTimerHandle BuffTimerHandle;
-
 	FVector OriginalWeaponEndTracePos;
 };

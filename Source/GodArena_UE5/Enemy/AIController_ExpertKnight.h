@@ -14,8 +14,5 @@ class GODARENA_UE5_API AAIController_ExpertKnight : public AAIController_Base
 {
 	GENERATED_BODY()
 public:
-	//void BlackBoardValueInit() override;
 	void BlackBoardValueTick() override;
-
-	
 };

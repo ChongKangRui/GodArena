@@ -18,9 +18,6 @@
 #include "EnhancedInputSubsystems.h"
 #include "../Weapon/BP_WeaponBase.h"
 
-
-
-
 APlayerCharacter::APlayerCharacter() {
 
 	// Create a camera boom (pulls in towards the player if there is a collision)
@@ -42,32 +39,18 @@ APlayerCharacter::APlayerCharacter() {
 
 void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
-	// Set up gameplay key bindings
 	check(PlayerInputComponent);
-	// Set up action bindings
-
 
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
-		//EnhancedInputComponent.get
-		//Jumping
-
-		//EnhancedInputComponent->BindAction(Dodge, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
-
-		//Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
-
-		//Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Look);
-
 	}
 
 }
 
-
 void APlayerCharacter::BeginPlay()
 {
-	// Call the base class  
 	Super::BeginPlay();
 
 	//Add Input Mapping Context
@@ -82,13 +65,6 @@ void APlayerCharacter::BeginPlay()
 
 
 }
-
-void APlayerCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-	//GetWorld()->GetTimerManager().ListTimers();
-}
-
 
 void APlayerCharacter::SetCharacterState(ECharacterState stateToChange)
 {

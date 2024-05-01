@@ -9,27 +9,15 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
-
-
-
 AAIController_Base::AAIController_Base() : UseControllerRotationState({ECharacterState::Defending, ECharacterState::Moving})
 {
 	behaviorTreeComponent = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("Behavior Tree Component"));
-
 	blackboardComp = CreateDefaultSubobject<UBlackboardComponent>(TEXT("Blackboard Component"));
 
 	SetActorTickInterval(0.1f);
 
-
 	DefaultInitRandomCharacteterState.Add(ECharacterState::Moving);
 	DefaultInitRandomCharacteterState.Add(ECharacterState::Attacking);
-}
-
-void AAIController_Base::BeginPlay()
-{
-	Super::BeginPlay();
-	//BlackBoardValueInit();
-
 }
 
 void AAIController_Base::Tick(float deltaTime)
@@ -51,7 +39,6 @@ void AAIController_Base::OnPossess(APawn* pawn)
 {
 	Super::OnPossess(pawn);
 
-	UE_LOG(LogTemp, Display, TEXT("Possesss"));
 	if (!IsValid(BehaviorTree))
 		return;
 
@@ -73,22 +60,18 @@ ECharacterState AAIController_Base::GetRandomBehavior(const TArray<ECharacterSta
 	int temp_randBehaviorInt = FMath::RandRange(0, StateList.Num() - 1);
 	ECharacterState temp_State = StateList[temp_randBehaviorInt];
 
-
 	return temp_State;
 
 }
 
 void AAIController_Base::BlackBoardValueInit()
 {
-	//UE_LOG(LogTemp, Display, TEXT("Recursion now"));
-	
 	if (!ownerCharacter)
 	{
 		return;
 	}
 	ownerCharacter->SetAIControllerReference(this);
 	
-
 	
 	if (!GetWorld()->GetTimerManager().IsTimerActive(BlackboardInitialization)) {
 
@@ -110,9 +93,6 @@ void AAIController_Base::BlackBoardValueInit()
 						else
 						{
 							blackboardComp->SetValueAsObject("Target", ownerCharacter->Target);
-
-							//ownerCharacter->SetCharacterState(GetRandomBehavior(DefaultInitRandomCharacteterState));
-							//SetFocus(ownerCharacter->Target);
 							GetWorld()->GetTimerManager().ClearTimer(BlackboardInitialization);
 
 						}
@@ -123,10 +103,6 @@ void AAIController_Base::BlackBoardValueInit()
 		GetWorld()->GetTimerManager().SetTimer(BlackboardInitialization,
 			temp_delegate, 0.1f, true, 0);
 	}
-
-	
-
-
 }
 
 void AAIController_Base::BlackBoardValueTick()
@@ -169,8 +145,6 @@ void AAIController_Base::SetRotationState()
 		ownerCharacter->GetCharacterMovement()->bUseControllerDesiredRotation = false;
 		ownerCharacter->GetCharacterMovement()->bOrientRotationToMovement = true;
 	}
-
-
 }
 
 void AAIController_Base::RotateToTarget()
@@ -185,8 +159,6 @@ void AAIController_Base::RotateToTarget()
 
 	FRotator FinalRotation = FMath::RInterpTo(ownerCharacter->GetActorRotation(),
 		TargetRotation, GetWorld()->GetDeltaSeconds(), RotationInterpSpeed);
-
-	//UE_LOG(LogTemp, Warning, TEXT("MyFloatValue: %f"), FinalRotation.Yaw);
 
 	SetControlRotation(FinalRotation);
 

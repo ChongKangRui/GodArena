@@ -14,6 +14,7 @@ UCLASS()
 class GODARENA_UE5_API UBTTask_ExecuteAction_Duration : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
+
 public:
 	UBTTask_ExecuteAction_Duration();
 
@@ -22,12 +23,13 @@ public:
 	
 	void EndTask();
 
-
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ECombatType CombatType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ToolTip = "0 mean loop, more than 0 will set a duration"))
 	float Duration = 1.0f;
+
 private:
 	UBehaviorTreeComponent* BTComp;
 	class UActionComponent* actionComp;

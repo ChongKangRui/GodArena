@@ -14,19 +14,17 @@ UBTTask_ExecuteAction_Duration::UBTTask_ExecuteAction_Duration()
 }
 
 EBTNodeResult::Type UBTTask_ExecuteAction_Duration::ExecuteTask(UBehaviorTreeComponent& owner_comp, uint8* node_memory)
-{//Controller
+{
 	BTComp = &owner_comp;
 	auto const aiController = owner_comp.GetAIOwner();
 	if (!aiController)
 		return EBTNodeResult::Failed;
 
-	//Character
 	actionComp = aiController->GetPawn()->FindComponentByClass<UActionComponent>();
 	if (!actionComp)
 		return EBTNodeResult::Failed;
 
 	actionComp->ExecuteAction(CombatType);
-	
 
 	FTimerDelegate temp_Delegate;
 

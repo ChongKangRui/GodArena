@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Action.h"
 #include "Components/TimelineComponent.h"
+#include "Engine/EngineTypes.h"
 #include "SAction_Dodge.generated.h"
 
 /**
@@ -19,6 +20,12 @@ class GODARENA_UE5_API USAction_Dodge : public USAction
 	
 
 public:
+
+	void Init(TObjectPtr <class AGodsArenaCharacter> owner, FCharacterCombat combatStruct) override;
+	void OnActionBegin_Implementation() override;
+	void OnActionEnd_Implementation() override;
+
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta =(ToolTip = "Whether wan to increase the dodge distance or not"))
 		float dodgeAnimRate = 1.1f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ToolTip = "Whether wan to increase the dodge distance or not"))
@@ -29,20 +36,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ToolTip = "Delay to play dodge montage"))
 		float DelayBeforeDodge = 0.5f;
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ToolTip = "Whether wan to increase the dodge distance or not"))
-		//float 
-
-	void Init(TObjectPtr <class AGodsArenaCharacter> owner, FCharacterCombat combatStruct) override;
-
-	//UFUNCTION(BlueprintCallable)
-	//	void Dodge(FVector dodgeDirection);
-
-	void OnActionBegin_Implementation() override;
-	void OnActionEnd_Implementation() override;
+	
 protected:
 	void RotationBeforeDodge(const FRotator& rotateDir);
 	float PlayDodgeMontage();
 
+protected:
 	FTimerHandle DodgeRotationHandle;
 	FTimerHandle DodgeFinishedHandle;
 	float alpha;

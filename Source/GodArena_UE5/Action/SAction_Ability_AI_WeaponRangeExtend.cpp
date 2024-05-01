@@ -47,7 +47,6 @@ void USAction_Ability_AI_WeaponRangeExtend::OnActionEnd_Implementation()
 
 			ownerCharacter->weapon->EndWeaponTracePoint->SetRelativeLocation(OriginalWeaponEndTracePos);
 		}
-		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString("Clear Trace"));
 	}
 
 }

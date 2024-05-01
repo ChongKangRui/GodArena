@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "SAction_Ability_WeaponRangeExtend.h"
+#include "Engine/EngineTypes.h"
 #include "SAction_KnightAbility02.generated.h"
 
 /**
@@ -14,7 +15,12 @@ class GODARENA_UE5_API USAction_KnightAbility02 : public USAction_Ability_Weapon
 {
 	GENERATED_BODY()
 public:
+	virtual void OnActionBegin_Implementation() override;
 
+	UFUNCTION()
+	void OnBuffEndBind();
+
+public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class ABuff_Base> ShieldBuff;
 
@@ -22,12 +28,6 @@ public:
 	float SpawnDelay = 1.0f;
 
 	ABuff_Base* BuffActor;
-
-	virtual void OnActionBegin_Implementation() override;
-	virtual void OnActionEnd_Implementation() override;
-
-	UFUNCTION()
-	void OnBuffEndBind();
 
 private:
 	void StunEnemy();

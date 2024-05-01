@@ -6,10 +6,6 @@
 #include "AIController.h"
 #include "AIController_Base.generated.h"
 
-/**
- *
- */
-
 
 UCLASS()
 class GODARENA_UE5_API AAIController_Base : public AAIController
@@ -19,6 +15,10 @@ class GODARENA_UE5_API AAIController_Base : public AAIController
 public:
 	AAIController_Base();
 
+	UFUNCTION(BlueprintPure)
+	ECharacterState GetRandomBehavior(const TArray<ECharacterState>& StateList);
+
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	 TObjectPtr < class UBehaviorTreeComponent> behaviorTreeComponent;
 
@@ -37,26 +37,22 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int SkillExecuteChance = 100;
 
-
-	void BeginPlay() override;
-	void Tick(float deltaTime) override;
-	void OnPossess(APawn* pawn) override;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<class AEnemy_Base> ownerCharacter;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float RotationInterpSpeed = 20.0;
 
-	UFUNCTION(BlueprintPure)
-	ECharacterState GetRandomBehavior(const TArray<ECharacterState>& StateList);
-
-
 protected:
+	void Tick(float deltaTime) override;
+	void OnPossess(APawn* pawn) override;
+
 	virtual void BlackBoardValueInit();
 	virtual void BlackBoardValueTick();
 	virtual void SetRotationState();
 	virtual void RotateToTarget();
+
+
 private:
 	FTimerHandle BlackboardInitialization;
 };

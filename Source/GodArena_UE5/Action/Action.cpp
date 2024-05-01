@@ -6,15 +6,6 @@
 #include "Animation/AnimMontage.h"
 #include "../Components/ActionComponent.h"
 
-
-
-//USAction::~USAction()
-//{
-//	if (GetWorld()) {
-//		GetWorld()->GetTimerManager().ClearAllTimersForObject(this);
-//	}
-//}
-
 void USAction::Init(TObjectPtr <AGodsArenaCharacter> owner, FCharacterCombat combatStruct)
 {
 	if (owner == nullptr)
@@ -22,19 +13,15 @@ void USAction::Init(TObjectPtr <AGodsArenaCharacter> owner, FCharacterCombat com
 		UE_LOG(LogTemp, Display, TEXT("owner invalid init"));
 		return;
 	}
-	//	UE_LOG(LogTemp, Display, TEXT("owner init success"));
 	ownerCharacter = owner;
 	combatInfo = combatStruct;
 	world = GetWorld();
-
 
 	if (!ownerCharacter || !world) {
 		AbandoneAction = true;
 		return;
 	}
-
 }
-
 
 bool USAction::ClearTimer(FTimerHandle& Handle)
 {
@@ -51,19 +38,13 @@ bool USAction::IsTimerActive(FTimerHandle& handle)
 	return GetWorld()->GetTimerManager().IsTimerActive(handle);
 }
 
-
-
 void USAction::OnActionBegin_Implementation()
 {
-
 	if (!ownerCharacter || AbandoneAction) {
 		return;
 	}
 
-
 	ownerCharacter->actionComp->OnActionBegin.Broadcast(ownerCharacter, this);
-
-
 }
 
 template<typename T>
@@ -92,7 +73,6 @@ FTimerHandle USAction::StartTimer(T* Object, void(T::* Function)(), const bool b
 
 FTimerHandle USAction::StartTimer(const FTimerDelegate& timerDelegate, const bool bLoop, const float delay)
 {
-	
 	// Set the timer with the specified duration and looping flag
 	FTimerHandle TimerHandle;
 	world->GetTimerManager().SetTimer(TimerHandle, timerDelegate, 0.02, bLoop, delay);
@@ -100,12 +80,8 @@ FTimerHandle USAction::StartTimer(const FTimerDelegate& timerDelegate, const boo
 	return TimerHandle;
 }
 
-
-
-
 void USAction::OnActionEnd_Implementation()
 {
-
 	if (!ownerCharacter || AbandoneAction)
 	{
 		return;
@@ -116,10 +92,6 @@ void USAction::OnActionEnd_Implementation()
 
 	ownerCharacter->actionComp->OnActionEnd.Broadcast(ownerCharacter, this);
 	ownerCharacter->actionComp->ClearCurrentAction();
-
-
-	//GetWorld()->GetTimerManager().ClearAllTimersForObject(this);
-
 }
 
 

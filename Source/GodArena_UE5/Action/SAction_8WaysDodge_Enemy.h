@@ -14,12 +14,18 @@ UCLASS()
 class GODARENA_UE5_API USAction_8WaysDodge_Enemy : public USAction
 {
 	GENERATED_BODY()
+
+public:
+	virtual void Init(TObjectPtr <class AGodsArenaCharacter> owner, FCharacterCombat combatStruct) override;
+	virtual void OnActionBegin_Implementation() override;
+	virtual void OnActionEnd_Implementation() override;
+
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ToolTip = "Whether wan to increase the dodge distance or not"))
 	float dodgeAnimRate = 1.2f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ToolTip = "float is dot product direction, int is the index montage gonna play"))
-	TMap<FVector2D, int> DirectionMontageMap = { 
+	TMap<FVector2D, int> DirectionMontageMap = {
 		//Forward Backward
 		{{1.0, 0.0}, 0 }, { {-1.0, 0.0}, 1 },
 		//Left Right
@@ -30,20 +36,11 @@ public:
 		{{-0.5, -0.5}, 6},{{-0.5, 0.5}, 7}
 	};
 
-	virtual void Init(TObjectPtr <class AGodsArenaCharacter> owner, FCharacterCombat combatStruct) override;
-
-	virtual void OnActionBegin_Implementation() override;
-	virtual void OnActionEnd_Implementation() override;
-
-	
 private:
-
 	void OnQueryFinished(TSharedPtr<FEnvQueryResult> result);
 	int GetClosestAngleMontageInt(FVector DodgeDir);
 
-	template <typename T>
-	void acas(void(T::*func)());
-
+private:
 	class AEnemy_Base* EnemyBase;
 	FTimerHandle DodgeFinishedHandle;
 

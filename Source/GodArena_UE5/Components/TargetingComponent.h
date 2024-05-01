@@ -32,26 +32,7 @@ class GODARENA_UE5_API UTargetingComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this component's properties
 	UTargetingComponent();
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TObjectPtr<AGodsArenaCharacter> CurrentTarget;
-
-	UPROPERTY(EditAnywhere)
-	FDodgeSetting dodgeSetting;
-
-	UPROPERTY(EditAnywhere)
-	TArray<ECharacterState> DisableMeshRotationState;
-
-	UPROPERTY(EditAnywhere)
-	float RotationInterpSpeed = 3.0f;
-
-	UPROPERTY(EditAnywhere)
-	float minimumTargetHeight = 0.0f;
-
-	UPROPERTY(EditAnywhere)
-	float maximumTargetHeight = -30.0f;
 
 	UFUNCTION(BlueprintCallable, meta = (ToolTip = "Can toggle target immedially if we have a valid target"))
 	void ToggleTarget();
@@ -78,23 +59,45 @@ public:
 
 	void SetTargetingPointWidget();
 
+public:
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<AGodsArenaCharacter> CurrentTarget;
+
+	UPROPERTY(EditAnywhere)
+	FDodgeSetting dodgeSetting;
+
+	UPROPERTY(EditAnywhere)
+	TArray<ECharacterState> DisableMeshRotationState;
+
+	UPROPERTY(EditAnywhere)
+	float RotationInterpSpeed = 3.0f;
+
+	UPROPERTY(EditAnywhere)
+	float minimumTargetHeight = 0.0f;
+
+	UPROPERTY(EditAnywhere)
+	float maximumTargetHeight = -30.0f;
 
 protected:
+	UFUNCTION()
+	void OnPlayerDeath(ECharacterState state);
+
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
 	void TargetingTick();
 
-	UFUNCTION()
-	void OnPlayerDeath(ECharacterState state);
-
+protected:
 	TObjectPtr<APlayerCharacter> player;
+	TObjectPtr<USceneComponent> CurrentPointWidget;
+	TArray<AGodsArenaCharacter*> TargetedList;
+
 	FTimerHandle TargetingHandle;
 
 	float TargetRotationSpeed;
 	bool IsTargeted;
 
-	TArray<AGodsArenaCharacter*> TargetedList;
-	TObjectPtr<USceneComponent> CurrentPointWidget;
+	
+
 };

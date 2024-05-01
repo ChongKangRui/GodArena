@@ -19,7 +19,6 @@ bool UBTDecorator_DistanceCheck::CalculateRawConditionValue(UBehaviorTreeCompone
 	if (!aiController)
 		return false;
 
-	//Character
 	auto const ownerPawn = Cast<AEnemy_Base>(aiController->GetPawn());
 	if (!ownerPawn)
 		return false;
@@ -28,6 +27,5 @@ bool UBTDecorator_DistanceCheck::CalculateRawConditionValue(UBehaviorTreeCompone
 	if(ownerPawn->Target)
 		temp_Distance = FVector::Dist(ownerPawn->GetActorLocation(), ownerPawn->Target->GetActorLocation());
 	
-    
 	return temp_Distance > MaxDistance;
 }

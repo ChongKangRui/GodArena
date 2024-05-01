@@ -13,16 +13,40 @@
 // Sets default values for this component's properties
 UActionComponent::UActionComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
 }
 
+void UActionComponent::ActionInitialization(AGodsArenaCharacter* ownerRef)
+{
+	if (!ownerRef)
+		return;
 
+	owner = ownerRef;
+	owner->OnStateChange.AddDynamic(this, &UActionComponent::OnCharacterDeath);
 
+	if (owner->GetActionInfoList().Num() <= 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Get Action info list failed"));
+		return;
+	}
 
+	//For loop to initializae action
+	for (auto Temp_ActionInfoList : owner->GetActionInfoList())
+	{
+		TSubclassOf<USAction> classType = Temp_ActionInfoList.Value.action.Get();
+		if (!ensure(classType))
+			continue;
+
+		//owner->DebugPrint(classType.Get()->GetFullName());
+		USAction* ac = NewObject<USAction>(GetOwner(), classType);
+
+		ac->Init(owner, Temp_ActionInfoList.Value);
+		//owner->DebugPrint(FString::FromInt(Temp_ActionInfoList.Value.Damage));
+		actionList.Add(Temp_ActionInfoList.Key, ac);
+	}
+
+	OnInitializaActionFinished.Broadcast();
+}
 
 bool UActionComponent::ExecuteAction(ECombatType actionType)
 {
@@ -87,8 +111,6 @@ void UActionComponent::TerminateAllAction()
 		USAction* temp_Action = Temp_ActionInfoList.Value;
 		if (temp_Action) {
 			temp_Action->OnActionEnd_Implementation();
-			//GetWorld()->GetTimerManager().ClearAllTimersForObject(temp_Action);
-			//UE_LOG(LogTemp, Warning, TEXT("puis"));
 		}
 
 	}
@@ -120,42 +142,6 @@ USAction* UActionComponent::GetAction(ECombatType actionName)
 	
 
 	return (*ActionPtr_Execute);
-}
-
-
-void UActionComponent::ActionInitialization( AGodsArenaCharacter* ownerRef)
-{
-	if (!ownerRef)
-		return;
-
-	owner = ownerRef;
-
-	owner->OnStateChange.AddDynamic(this, &UActionComponent::OnCharacterDeath);
-
-	if (owner->GetActionInfoList().Num() <= 0)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Get Action info list failed"));
-		return;
-	}
-	
-
-	//For loop to initializae action
-	for (auto Temp_ActionInfoList : owner->GetActionInfoList())
-	{
-		TSubclassOf<USAction> classType = Temp_ActionInfoList.Value.action.Get();
-		if (!ensure(classType))
-			continue;
-		
-		//owner->DebugPrint(classType.Get()->GetFullName());
-		USAction* ac = NewObject<USAction>(GetOwner(),classType);
-
-		ac->Init(owner, Temp_ActionInfoList.Value);
-		//owner->DebugPrint(FString::FromInt(Temp_ActionInfoList.Value.Damage));
-		actionList.Add(Temp_ActionInfoList.Key, ac);
-	}
-
-
-	OnInitializaActionFinished.Broadcast();
 }
 
 void UActionComponent::OnCharacterDeath(ECharacterState state)

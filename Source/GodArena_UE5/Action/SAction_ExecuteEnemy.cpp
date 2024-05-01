@@ -9,14 +9,12 @@
 #include "../GodArenaFunctionLibrary.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
-
 void USAction_ExecuteEnemy::OnActionBegin_Implementation()
 {
 	Super::OnActionBegin_Implementation();
 
 	APlayerCharacter* temp_player = nullptr;
 	AEnemy_Base* temp_EnemyOwner = nullptr;
-	ownerCharacter->DebugPrint("EnemyExecuteActionTrigger");
 	//For Player
 	temp_player = Cast<APlayerCharacter>(ownerCharacter);
 	if (temp_player)
@@ -58,15 +56,12 @@ void USAction_ExecuteEnemy::ExecuteTarget(AGodsArenaCharacter* Target)
 	if (Target)
 	{
 		if (Target->GetCharacterState() != ECharacterState::Stun) {
-			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString("Execute failed"));
 			OnActionEnd_Implementation();
 			return;
 		}
-		
 
 		Target->SetCharacterState(ECharacterState::Executed);
 		Target->StopAnimMontage(Target->GetCurrentMontage());
-
 
 		FVector temp_ExecuteVector = Target->GetActorLocation() + (Target->GetActorForwardVector() * ExecuteDistance);
 		ownerCharacter->SetActorLocation(temp_ExecuteVector);

@@ -16,17 +16,8 @@ class GODARENA_UE5_API AEnemy_Base : public AGodsArenaCharacter
 public:
 	AEnemy_Base();
 
-	void BeginPlay() override;
-
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-		 TObjectPtr<class UEnvQuery> DodgeEQS;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-		TObjectPtr<AGodsArenaCharacter> Target;
-
 	UFUNCTION(BlueprintCallable)
-		void SetCharacterJogState(const ECharacterJogState& JogStateToChange);
+	void SetCharacterJogState(const ECharacterJogState& JogStateToChange);
 
 	inline void SetAIControllerReference(class AAIController_Base* controllerReference)
 	{
@@ -36,6 +27,13 @@ public:
 	void SetCharacterState(ECharacterState stateToChange) override;
 	void Death() override;
 
+public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+		 TObjectPtr<class UEnvQuery> DodgeEQS;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		TObjectPtr<AGodsArenaCharacter> Target;
+
 protected:
-	 TObjectPtr < class AAIController_Base> AIController;
+	 TObjectPtr<class AAIController_Base> AIController;
 };

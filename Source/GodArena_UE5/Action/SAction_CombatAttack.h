@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Action.h"
 #include "../StructAndEnum.h"
+#include "Engine/EngineTypes.h"
 #include "SAction_CombatAttack.generated.h"
 
 /**
@@ -17,35 +18,33 @@ class GODARENA_UE5_API USAction_CombatAttack : public USAction
 public:
 	void Init(TObjectPtr <class AGodsArenaCharacter> owner, FCharacterCombat combatStruct) override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float Execute_Distance = 200.0f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float Execute_Angle = 35.0f;
-
-
 	UFUNCTION(BlueprintCallable)
-		bool SetCombatState(ECombatState combatState);
-
+	bool SetCombatState(ECombatState combatState);
 
 	UFUNCTION(BlueprintCallable, meta = (ToolTip = "Usually used to play combat animation and continue combat"))
-		bool PlayCombatMontage();
-
+	bool PlayCombatMontage();
 
 	UFUNCTION(BlueprintCallable, meta = (ToolTip = "Usually used to reset everything "))
-		void ResetCombatMontage();
+	void ResetCombatMontage();
 
 	UFUNCTION(BlueprintCallable)
-		ECombatState GetCombatState() const
+	ECombatState GetCombatState() const
 	{
 		return combatState;
 	}
 
 	void ExecuteEnemy();
 	bool CanExecuteTarget();
-	
+
 	virtual void OnActionBegin_Implementation() override;
 	virtual void OnActionEnd_Implementation() override;
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float Execute_Distance = 200.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float Execute_Angle = 35.0f;
 
 protected:
 	virtual void CombatResetTimer();

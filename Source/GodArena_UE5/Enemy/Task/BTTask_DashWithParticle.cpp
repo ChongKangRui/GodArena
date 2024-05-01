@@ -26,7 +26,6 @@ EBTNodeResult::Type UBTTask_DashWithParticle::ExecuteTask(UBehaviorTreeComponent
 
 	aiController->MoveToLocation(MoveLocation);
 	
-
 	if(BlinkEffect)
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(owner->GetWorld(), BlinkEffect,
 			owner->GetActorLocation(),
@@ -47,7 +46,6 @@ EBTNodeResult::Type UBTTask_DashWithParticle::ExecuteTask(UBehaviorTreeComponent
 					DaskComp = UNiagaraFunctionLibrary::SpawnSystemAtLocation(owner->GetWorld(), DashEffect,
 						owner->GetActorLocation(),
 						rotation, FVector(1.0f), true, true, ENCPoolMethod::None, true);
-					//}
 				}
 				
 				if (owner->GetVelocity().Length() <= 0.0f && Dist <=200) {
@@ -60,7 +58,6 @@ EBTNodeResult::Type UBTTask_DashWithParticle::ExecuteTask(UBehaviorTreeComponent
 
 		GetWorld()->GetTimerManager().SetTimer(handle, TimerDelegate, 0.1, true, 0);
 	}
-
 
 	return EBTNodeResult::InProgress;
 }

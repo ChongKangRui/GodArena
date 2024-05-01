@@ -36,14 +36,54 @@ class GODARENA_UE5_API ABP_WeaponBase : public AActor
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this actor's properties
 	ABP_WeaponBase();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void BeginTrace();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void EndTrace();
+
+	UFUNCTION(BlueprintCallable)
+	void Trace(FVector BeginPoint, FVector EndPoint, EWeaponTraceType traceType);
+
+	UFUNCTION(BlueprintCallable)
+	FTimerHandle BeginTraceTick(const USceneComponent* BeginPoint, const USceneComponent* EndPoint, EWeaponTraceType traceType);
+	
+	UFUNCTION(BlueprintCallable)
+	void EndTraceTick(FTimerHandle EndTimerHandle);
+
+	UFUNCTION(BlueprintCallable)
+	void ExtendTraceLength(const FVector& ExtendedLength);
+
+	UFUNCTION(BlueprintCallable)
+	void DrawDebugTrace(FVector start, FVector end, EWeaponTraceType traceType);
+
+	UFUNCTION(BlueprintCallable)
+	void SetAttribute(const FCharacterCombatAnimation& attributeSet);
+
+	UFUNCTION(BlueprintPure)
+	FCharacterCombatAnimation GetCurrentAttribute() const {
+		return attribute;
+	};
+
+	UFUNCTION(BlueprintCallable)
+	void SetAttributeDebuff(const FAttackDebuff& attributeDebuffSet);
+
+	UFUNCTION(BlueprintCallable)
+	void BeginTrail();
+
+	UFUNCTION(BlueprintCallable)
+	void EndTrail();
+
+	UFUNCTION(BlueprintCallable)
+	const FVector GetInitialEndPointLocation() const {
+		return OriginalEndPointVec;
+	}
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
-
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UStaticMeshComponent* mesh;
 
@@ -104,63 +144,14 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnHitActor OnWeaponTraceHit;
 
-public:
-
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void BeginTrace();
-
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void EndTrace();
-
-	UFUNCTION(BlueprintCallable)
-	FTimerHandle BeginTraceTick(const USceneComponent* BeginPoint, const USceneComponent* EndPoint, EWeaponTraceType traceType);
-
-	UFUNCTION(BlueprintCallable)
-	void ExtendTraceLength(const FVector& ExtendedLength);
-
-	UFUNCTION(BlueprintCallable)
-	void EndTraceTick(FTimerHandle EndTimerHandle);
-
-	UFUNCTION(BlueprintCallable)
-	void DrawDebugTrace(FVector start, FVector end, EWeaponTraceType traceType);
-
-	UFUNCTION(BlueprintCallable)
-	void Trace(FVector BeginPoint, FVector EndPoint, EWeaponTraceType traceType);
-
-	UFUNCTION(BlueprintCallable)
-	void SetAttribute(const FCharacterCombatAnimation& attributeSet);
-
-	UFUNCTION(BlueprintPure)
-	FCharacterCombatAnimation GetCurrentAttribute() const {
-		return attribute;
-	};
-
-	UFUNCTION(BlueprintCallable)
-	void SetAttributeDebuff(const FAttackDebuff& attributeDebuffSet);
-
-	UFUNCTION(BlueprintCallable)
-	void BeginTrail();
-
-	UFUNCTION(BlueprintCallable)
-	void EndTrail();
-
-	UFUNCTION(BlueprintCallable)
-	const FVector GetInitialEndPointLocation() const {
-		return OriginalEndPointVec;
-	}
-
-
 protected:
-	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class AGodsArenaCharacter* ownerCharacter;
 	
 	FTimerHandle currentTraceHandle;
 	FCharacterCombatAnimation attribute;
-	//TArray<AActor*> Temp_IgnoredActor;
+
 private:
-	/*FVector BeginTracePoint;
-	FVector EndTracePoint;*/
 	FVector OriginalEndPointVec;
 	
 };

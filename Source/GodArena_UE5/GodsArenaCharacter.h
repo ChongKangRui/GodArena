@@ -18,27 +18,26 @@ UCLASS(config = Game)
 class AGodsArenaCharacter : public ACharacter
 {
 	GENERATED_BODY()
-
-
 public:
 	AGodsArenaCharacter();
-
-
 	virtual void BeginPlay() override;
-
-
 
 	UFUNCTION(BlueprintCallable)
 	virtual void SetExecutedState(EExecutedState Executed_State);
 
-	UFUNCTION(BlueprintPure)
-	const EExecutedState GetCharacterExecutedState()
-	{
-		return executedState;
-	};
-
 	UFUNCTION(BlueprintCallable)
 	virtual void SetCharacterBuff(FAttackBuff buff);
+
+	UFUNCTION(BlueprintCallable)
+	virtual void SetCharacterState(ECharacterState state);
+
+	UFUNCTION(BlueprintCallable)
+	virtual void SetCharacterMovementState(ECharacterJogState MovementState);
+
+	UFUNCTION(BlueprintCallable)
+	void SetParryingState(EParryingState parryingStateToChange) {
+		parryingState = parryingStateToChange;
+	};
 
 	UFUNCTION(BlueprintPure)
 	const FAttackBuff GetCharacterBuff()
@@ -46,11 +45,70 @@ public:
 		return CharacterBuff;
 	};
 
+	UFUNCTION(BlueprintPure)
+	const TMap<ECombatType, FCharacterCombat> GetActionInfoList() {
+		return ActionInfoList;
+	}
+
+	UFUNCTION(BlueprintPure)
+	const FCharacterInfo& GetCharacterInfo() {
+		if (characterInfo != nullptr)
+		{
+			return *characterInfo;
+		}
+		static const FCharacterInfo DefaultCharacterInfo;
+		return DefaultCharacterInfo;
+	}
+
+	UFUNCTION(BlueprintPure)
+	const EExecutedState GetCharacterExecutedState()
+	{
+		return executedState;
+	};
+
+	UFUNCTION(BlueprintPure)
+	EParryingState GetParryingState() const {
+		return parryingState;
+	};
+
+	UFUNCTION(BlueprintPure)
+	ECharacterState GetCharacterState() const
+	{
+		return state;
+	};
+
+	UFUNCTION(BlueprintPure)
+	ECharacterJogState GetCharacterMovementState() const
+	{
+		return characterMovementState;
+	};
+
+	UFUNCTION(BlueprintCallable)
+	virtual void Death();
+
+	UFUNCTION(BlueprintCallable)
+	virtual void StunCharacter(const float& duration);
+
+	UFUNCTION(BlueprintCallable)
+	virtual void BindOnWeaponTraceHit(AGodsArenaCharacter* HitCharacter, FCharacterCombatAnimation currentEnemyAttribute);
+
+	UFUNCTION(BlueprintCallable, meta = (ToolTip = "This will stop all timer for this character(including component)"))
+	void TerminateCharacter();
+
+	UFUNCTION(BlueprintCallable)
+	void DebugPrint(FString text) {
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, text);
+	}
+
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TMap<ECharacterJogState, float> JogState = { {ECharacterJogState::Jog, 300.0f }, {ECharacterJogState::Run, 800.0f } };
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character)
 	ECharacterType ownerType;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Weapon)
+	TObjectPtr<class ABP_WeaponBase> weapon;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Components)
 	TObjectPtr<UActionComponent> actionComp;
@@ -67,74 +125,6 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnExecuteStateChange OnExecuteStageChange;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Weapon)
-	 TObjectPtr<class ABP_WeaponBase> weapon;
-
-	/*UFUNCTION(BlueprintCallable)
-		void SetExecutionState();*/
-
-	UFUNCTION(BlueprintPure)
-	const TMap<ECombatType, FCharacterCombat> GetActionInfoList() {
-		return ActionInfoList;
-	}
-
-
-
-
-	UFUNCTION(BlueprintPure)
-	const FCharacterInfo& GetCharacterInfo() {
-		if (characterInfo != nullptr)
-		{
-			return *characterInfo;
-		}
-		static const FCharacterInfo DefaultCharacterInfo;
-		return DefaultCharacterInfo;
-	}
-
-	UFUNCTION(BlueprintCallable)
-	void DebugPrint(FString text) {
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, text);
-	}
-
-	UFUNCTION(BlueprintCallable)
-	virtual void Death();
-
-	UFUNCTION(BlueprintCallable)
-	virtual void StunCharacter(const float& duration);
-
-	UFUNCTION(BlueprintCallable)
-	virtual void BindOnWeaponTraceHit(AGodsArenaCharacter* HitCharacter, FCharacterCombatAnimation currentEnemyAttribute);
-
-	UFUNCTION(BlueprintPure)
-	EParryingState GetParryingState() const {
-		return parryingState;
-	};
-	UFUNCTION(BlueprintCallable)
-	void SetParryingState(EParryingState parryingStateToChange) {
-		parryingState = parryingStateToChange;
-	};
-
-	UFUNCTION(BlueprintCallable)
-	virtual void SetCharacterState(ECharacterState state);
-
-	UFUNCTION(BlueprintPure)
-	ECharacterState GetCharacterState() const
-	{
-		return state;
-	};
-
-	UFUNCTION(BlueprintCallable)
-	virtual void SetCharacterMovementState(ECharacterJogState MovementState);
-
-	UFUNCTION(BlueprintPure)
-	ECharacterJogState GetCharacterMovementState() const
-	{
-		return characterMovementState;
-	};
-
-	UFUNCTION(BlueprintCallable, meta = (ToolTip = "This will stop all timer for this character(including component)"))
-	void TerminateCharacter();
-
 protected:
 	//CharacterState
 	ECharacterState state;
@@ -146,9 +136,10 @@ protected:
 	FCharacterInfo* characterInfo;
 	FAttackBuff CharacterBuff;
 
-	 TObjectPtr<class UDataTable> DataTableAsset;
+	TObjectPtr<class UDataTable> DataTableAsset;
 	TMap<ECombatType, FCharacterCombat> ActionInfoList;
 
+protected:
 	//Put to construction script
 	void DataTableInitialization();
 

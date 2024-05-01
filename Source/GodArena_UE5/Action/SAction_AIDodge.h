@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "EnvironmentQuery/EnvQueryTypes.h"
 #include "Action.h"
+#include "Engine/EngineTypes.h"
 #include "SAction_AIDodge.generated.h"
 
 /**

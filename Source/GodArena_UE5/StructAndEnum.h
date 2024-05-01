@@ -2,18 +2,10 @@
 #include "CoreMinimal.h"
 #include "Runtime/Engine/Classes/Engine/DataTable.h"
 #include "StructAndEnum.generated.h"
-//class UDatatable;
-
-
-
-
 
 UENUM(BlueprintType)
 enum class ECharacterState : uint8
 {
-	//Use for any purpose, represent none
-	//None,
-	//Use to determine is attacking or not
 	Idle,
 	Attacking,
 	Dodging,
@@ -32,7 +24,6 @@ enum class ECharacterState : uint8
 	Death
 };
 
-
 UENUM(BlueprintType)
 enum class ECharacterJogState : uint8
 {
@@ -43,8 +34,6 @@ enum class ECharacterJogState : uint8
 	NoMovement
 
 };
-
-
 
 UENUM(BlueprintType)
 enum class ELockTargetState : uint8
@@ -96,9 +85,6 @@ enum class ECombatType : uint8
 
 };
 
-
-
-
 UENUM(BlueprintType)
 enum class ECombatState : uint8
 {
@@ -108,7 +94,6 @@ enum class ECombatState : uint8
 	NextCombo
 
 };
-
 
 UENUM(BlueprintType)
 enum class EExecutedState : uint8
@@ -148,6 +133,7 @@ enum class EParryingState : uint8
 	Parrying
 
 };
+
 UENUM(BlueprintType)
 enum class ETurnInPlace : uint8
 {
@@ -156,7 +142,6 @@ enum class ETurnInPlace : uint8
 	TurnRight
 
 };
-
 
 USTRUCT(BlueprintType)
 struct FAttackDebuff
@@ -179,7 +164,6 @@ struct FAttackDebuff
 	float StaminaCost = 10.0f;
 
 };
-
 
 USTRUCT(BlueprintType)
 struct FAttackBuff
@@ -209,7 +193,6 @@ struct FAttackBuff
 
 
 };
-
 
 USTRUCT(BlueprintType)
 struct FCharacterCombatAnimation

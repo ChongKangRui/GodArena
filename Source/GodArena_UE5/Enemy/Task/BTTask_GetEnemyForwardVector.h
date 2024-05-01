@@ -15,13 +15,15 @@ class GODARENA_UE5_API UBTTask_GetEnemyForwardVector : public UBTTask_Blackboard
 	GENERATED_BODY()
 
 public:
+	UBTTask_GetEnemyForwardVector();
+	EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& owner_comp, uint8* node_memory) override;
+
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float ForwardDistance = 200.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FBlackboardKeySelector Out_TargetForwardVector;
 		
-	UBTTask_GetEnemyForwardVector();
-	EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& owner_comp, uint8* node_memory) override;
 	
 };

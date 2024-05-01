@@ -18,7 +18,7 @@ public:
 	EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& owner_comp, uint8* node_memory) override;
 	EBTNodeResult::Type AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override; 
 
-	
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UAnimMontage* testMontage;
 

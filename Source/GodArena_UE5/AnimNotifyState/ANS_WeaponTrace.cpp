@@ -5,8 +5,6 @@
 #include "../Weapon/BP_WeaponBase.h"
 #include "../GodsArenaCharacter.h"
 
-
-
 void UANS_WeaponTrace::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration)
 {
 	AActor* owner = MeshComp->GetOwner();
@@ -18,10 +16,8 @@ void UANS_WeaponTrace::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequen
 	if (!ownerCharacter || !ownerCharacter->weapon) {
 		return;
 	}
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString("begin trace"));
-	weapon = ownerCharacter->weapon;
 
-	
+	weapon = ownerCharacter->weapon;
 
 	if (CanParry)
 		ownerCharacter->SetParryingState(EParryingState::CanParry);
@@ -53,9 +49,7 @@ void UANS_WeaponTrace::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequence
 
 	if (weapon)
 	{
-		/*if (BeginTrailActivated) {
-			weapon->TrailActivated = false;
-		}*/
+
 		if (CanParry)
 			ownerCharacter->SetParryingState(EParryingState::None);
 

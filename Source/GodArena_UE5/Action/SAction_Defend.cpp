@@ -54,9 +54,6 @@ void USAction_Defends::OnActionEnd_Implementation()
 		if (GetWorld()->GetTimerManager().IsTimerActive(Parry_Handle))
 			GetWorld()->GetTimerManager().ClearTimer(Parry_Handle);
 	}
-
-	
-
 }
 
 void USAction_Defends::HitReactionBind(AActor* Instigator,float Amount, FAttackDebuff debuff)

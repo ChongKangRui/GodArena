@@ -15,11 +15,15 @@ class GODARENA_UE5_API UANS_WeaponTrace : public UAnimNotifyState
 {
 	GENERATED_BODY()
 
-public:
+protected:
 	virtual bool ShouldFireInEditor() {
 		return false;
 	}
 
+	virtual void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration) override;
+	virtual void NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
+
+protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool BeginTrailActivated = false;
 
@@ -31,9 +35,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (EditCondition = "ApplyDebuff", EditConditionHides, ToolTip = "Normally Use for AI"))
 	FAttackDebuff DebuffToApply;
-
-	virtual void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration) override;
-	virtual void NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
 
 private:
 	class ABP_WeaponBase* weapon;

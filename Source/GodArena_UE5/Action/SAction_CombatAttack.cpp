@@ -21,7 +21,6 @@ void USAction_CombatAttack::Init(TObjectPtr <AGodsArenaCharacter> owner, FCharac
 	TargetingComp = ownerCharacter->FindComponentByClass<UTargetingComponent>();
 }
 
-
 bool USAction_CombatAttack::SetCombatState(ECombatState combatStateToChange)
 {
 	if (IsTimerActive(ResetCombatHandle)) {
@@ -100,9 +99,6 @@ void USAction_CombatAttack::ResetCombatMontage()
 	if (!ownerCharacter)
 		return;
 
-	//Reset Combat
-	//ownerCharacter->DebugPrint("ResetCombat");
-
 	if (ResetCombatHandle.IsValid()) {
 		GetWorld()->GetTimerManager().ClearTimer(ResetCombatHandle);
 		ResetCombatHandle.Invalidate();
@@ -116,11 +112,9 @@ void USAction_CombatAttack::ResetCombatMontage()
 	
 }
 
-
 bool USAction_CombatAttack::CanExecuteTarget()
 {
 	//Get direction from potential switch target
-
 	if (!TargetingComp)
 		return false;
 

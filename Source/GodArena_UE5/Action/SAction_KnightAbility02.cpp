@@ -16,7 +16,6 @@ void USAction_KnightAbility02::OnActionBegin_Implementation()
 	}
 
 	Super::OnActionBegin_Implementation();
-	//ownerCharacter->SetCharacterState(ECharacterState::SkillExecuting);
 
 	FActorSpawnParameters temp_SpawnParams;
 	temp_SpawnParams.Owner = ownerCharacter;
@@ -24,8 +23,7 @@ void USAction_KnightAbility02::OnActionBegin_Implementation()
 	
 	FTimerHandle temp_SpawnHandle;
 	FTimerDelegate temp_delegate;
-	//Bind event by lamdba expression
-	
+
 	temp_delegate.BindWeakLambda(this, [this, temp_SpawnParams]()
 		{
 			if (ShieldBuff && ownerCharacter) {
@@ -43,11 +41,6 @@ void USAction_KnightAbility02::OnActionBegin_Implementation()
 	StartTimer(this, &USAction_KnightAbility02::StunEnemy, false, 0.5f);
 }
 
-void USAction_KnightAbility02::OnActionEnd_Implementation()
-{
-	Super::OnActionEnd_Implementation();
-	
-}
 
 void USAction_KnightAbility02::OnBuffEndBind()
 {

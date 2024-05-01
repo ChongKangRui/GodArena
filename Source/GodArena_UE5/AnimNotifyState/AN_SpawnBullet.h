@@ -6,9 +6,6 @@
 #include "Animation/AnimNotifies/AnimNotify.h"
 #include "AN_SpawnBullet.generated.h"
 
-/**
- * 
- */
 
 class ABuff_Base;
 
@@ -26,8 +23,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FTransform TransformOffset = {FRotator(0.1f),FVector(0.0f) ,FVector(0.0f) };
 
+protected:
 	void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference) override;
-
-private:
 
 };

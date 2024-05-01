@@ -18,17 +18,14 @@ class GODARENA_UE5_API UBTTask_ExecuteRandomAction : public UBTTask_BlackboardBa
 public:
 	UBTTask_ExecuteRandomAction();
 
-	EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& owner_comp, uint8* node_memory) override;
-	EBTNodeResult::Type AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
-
-	
-
-	//Alway make sure it is a ufunction in order to bind dynamic delegate
 	UFUNCTION()
 	void OnActionEndBind(class AGodsArenaCharacter* OwnerCharacter, class USAction* CurrentAction);
+
+	EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& owner_comp, uint8* node_memory) override;
+	EBTNodeResult::Type AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 	void EndTask();
 
-
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<ECombatType> CombatType;
 

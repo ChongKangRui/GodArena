@@ -15,7 +15,4 @@ class GODARENA_UE5_API UBTService_MovementChange : public UBTService
 	GENERATED_BODY()
 public:
 	UBTService_MovementChange();
-	
-	//ReceiveActivationAI() override;
-	
 };

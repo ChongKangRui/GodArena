@@ -6,8 +6,6 @@
 #include "GameFramework/Actor.h"
 #include "../Action/SAction_CombatAttack.h"
 
-
-
 void UANS_SetCombatState::CombatContinuation(USkeletalMeshComponent* MeshComp, bool isCombatContinue)
 {
 	if (!MeshComp || !MeshComp->GetOwner())
@@ -17,20 +15,11 @@ void UANS_SetCombatState::CombatContinuation(USkeletalMeshComponent* MeshComp, b
 	UActionComponent* Comp = MeshComp->GetOwner()->FindComponentByClass<UActionComponent>();
 	if (Comp)
 	{
-		USAction_CombatAttack* CA = Cast<USAction_CombatAttack>(Comp->GetCurrentActiveAction());
-		if (!CA)
-		{
-			UE_LOG(LogTemp, Display, TEXT("invalid CurrentAction"));
-			//return;
-		}
-		CA = Cast<USAction_CombatAttack>(Comp->GetAction(combatType));
-
-
+		USAction_CombatAttack* CA = Cast<USAction_CombatAttack>(Comp->GetAction(combatType));
 		if(!CA) {
 			UE_LOG(LogTemp, Display, TEXT("DataTable not contain this combat type"));
-			//return;
+			return;
 		}
-
 
 		if (isCombatContinue)
 		{
@@ -48,15 +37,12 @@ void UANS_SetCombatState::CombatContinuation(USkeletalMeshComponent* MeshComp, b
 }
 
 void UANS_SetCombatState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration)
-{
-	//UE_LOG(LogTemp, Display, TEXT("Hi notify begin"));
+{	
 	CombatContinuation(MeshComp, true);
 }
 
 void UANS_SetCombatState::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
 {
-	
-	//UE_LOG(LogTemp, Display, TEXT("Animation Name: %s"), *Animation->GetName());
 	CombatContinuation(MeshComp, false);
 }
 

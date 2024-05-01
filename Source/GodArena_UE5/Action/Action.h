@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "../StructAndEnum.h"
+#include "Engine/EngineTypes.h"
 #include "Action.generated.h"
 
 
@@ -16,14 +17,6 @@ UCLASS(Blueprintable)
 class GODARENA_UE5_API USAction : public UObject
 {
 	GENERATED_BODY()
-
-public:
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool AbandoneAction = false;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool NoEffectFromDebuff = false;
 
 public:
 	virtual void Init(TObjectPtr<class AGodsArenaCharacter> owner, FCharacterCombat combatStruct);
@@ -43,12 +36,12 @@ public:
 		return ownerCharacter;
 	}
 
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool AbandoneAction = false;
 
-protected:
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<class AGodsArenaCharacter> ownerCharacter;
-	FCharacterCombat combatInfo;
-	UWorld* world;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool NoEffectFromDebuff = false;
 
 protected:
 	template <typename T>
@@ -60,6 +53,10 @@ protected:
 
 	bool IsTimerActive(FTimerHandle& handle);
 
+protected:
+	TObjectPtr<class AGodsArenaCharacter> ownerCharacter;
+	FCharacterCombat combatInfo;
+	UWorld* world;
 };
 
 

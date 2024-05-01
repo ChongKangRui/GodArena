@@ -31,24 +31,18 @@ EBTNodeResult::Type UBTTAsk_Attack::ExecuteTask(UBehaviorTreeComponent& owner_co
 
 	FTimerDelegate temp_delegate;
 	FTimerHandle temp_Handle;
+
 	//Bind event by lamdba expression
-	
 	temp_delegate.BindWeakLambda(this,[this,&owner_comp,&ownerPawn]()
 		{
 			IsMontagePlaying = ownerPawn->GetMesh()->GetAnimInstance()->IsAnyMontagePlaying();
 			if (!IsMontagePlaying)
 			{
-				//TimerChecking(owner_comp);
-				//FinishLatentTask(owner_comp, EBTNodeResult::Succeeded);
 				FinishLatentTask(owner_comp, EBTNodeResult::Succeeded);
-				
 			}
 		});
 	GetWorld()->GetTimerManager().SetTimer(temp_Handle,
 		temp_delegate, 0.1f, true, 0);
-
-
-
 
 	return EBTNodeResult::InProgress;
 }
@@ -66,8 +60,6 @@ EBTNodeResult::Type UBTTAsk_Attack::AbortTask(UBehaviorTreeComponent& OwnerComp,
 		return EBTNodeResult::Failed;
 
 	ownerPawn->actionComp->TerminateAction(ECombatType::NormalAttack);
-
-
 
 	return EBTNodeResult::Type();
 }

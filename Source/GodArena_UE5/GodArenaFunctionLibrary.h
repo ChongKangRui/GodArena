@@ -17,14 +17,11 @@ class GODARENA_UE5_API UGodArenaFunctionLibrary : public UBlueprintFunctionLibra
 
 public:
 	UFUNCTION(BlueprintCallable)
-		static bool ApplyDamage(AActor* DamageCauser, AActor* DamagedTarget, const float& damageAmount, const FAttackDebuff& debuff);
+	static bool ApplyDamage(AActor* DamageCauser, AActor* DamagedTarget, const float& damageAmount, const FAttackDebuff& debuff);
 
 	UFUNCTION(BlueprintCallable)
-		static bool ApplyStaminaDeduction(AActor* DamageCauser, AActor* DamagedTarget, float StaminaAmount);
-
-	template <typename T>
-	static FTimerHandle StartTimer(UObject* owner,void(T::* Function)(), float duration, bool bLoop);
-
+	static bool ApplyStaminaDeduction(AActor* DamageCauser, AActor* DamagedTarget, float StaminaAmount);
+	
 };
 
 

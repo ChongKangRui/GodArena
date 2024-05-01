@@ -7,12 +7,6 @@
 #include "NiagaraComponent.h"
 #include "BTTask_DashWithParticle.generated.h"
 
-/**
- * 
- */
-
-
-
 UCLASS()
 class GODARENA_UE5_API UBTTask_DashWithParticle : public UBTTask_BlackboardBase
 {
@@ -21,11 +15,15 @@ class GODARENA_UE5_API UBTTask_DashWithParticle : public UBTTask_BlackboardBase
 public:
 	EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& owner_comp, uint8* node_memory) override;
 
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UNiagaraSystem* DashEffect;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ToolTip = "Spawn at the begin and the end of dash"))
 	UNiagaraSystem* BlinkEffect;
+private:
+	void EndTask();
+
 private:
 	UNiagaraComponent* BlinkComp;
 	UNiagaraComponent* DaskComp;
@@ -34,5 +32,5 @@ private:
 	UBehaviorTreeComponent* BTComp;
 
 	FTimerHandle handle;
-	void EndTask();
+	
 };

@@ -10,10 +10,8 @@
 
 using namespace EDrawDebugTrace;
 
-// Sets default values
 ABP_WeaponBase::ABP_WeaponBase()
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
@@ -35,13 +33,6 @@ void ABP_WeaponBase::BeginPlay()
 	Super::BeginPlay();
 	ownerCharacter = Cast<AGodsArenaCharacter>(GetParentActor());
 	OriginalEndPointVec = EndWeaponTracePoint->GetRelativeLocation();
-
-}
-// Called every frame
-void ABP_WeaponBase::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
 }
 
 void ABP_WeaponBase::BeginTrace_Implementation()
@@ -84,27 +75,6 @@ FTimerHandle ABP_WeaponBase::BeginTraceTick(const USceneComponent* BeginPoint, c
 
 }
 
-void ABP_WeaponBase::ExtendTraceLength(const FVector& ExtendedLength)
-{
-	EndWeaponTracePoint->SetRelativeLocation(OriginalEndPointVec + ExtendedLength);
-	
-}
-
-void ABP_WeaponBase::EndTraceTick(FTimerHandle EndTimerHandle)
-{
-	if (GetWorld()->GetTimerManager().IsTimerActive(EndTimerHandle)) {
-
-		//
-		//GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, FString("Clear Success"));
-		GetWorld()->GetTimerManager().ClearTimer(EndTimerHandle);
-	}
-	IgnoredActorList.Empty();
-	OnWeaponEndTrace.Broadcast();
-
-}
-
-
-
 void ABP_WeaponBase::Trace(FVector BeginPoint, FVector EndPoint, EWeaponTraceType traceType)
 {
 	if (!ownerCharacter)
@@ -116,8 +86,6 @@ void ABP_WeaponBase::Trace(FVector BeginPoint, FVector EndPoint, EWeaponTraceTyp
 
 	FVector Start = BeginPoint;
 	FVector End = EndPoint;
-
-
 
 	TraceParams.AddIgnoredActors(IgnoredActorList);
 
@@ -136,25 +104,20 @@ void ABP_WeaponBase::Trace(FVector BeginPoint, FVector EndPoint, EWeaponTraceTyp
 		temp_traceType = ForDuration;
 	}
 
-
 	switch (traceType)
 	{
 	case EWeaponTraceType::SphereTrace:
-		//shape = FCollisionShape::MakeSphere(SphereRadius);
-		//UKismetSystemLibrary::SphereTraceMulti
 		bHit = UKismetSystemLibrary::SphereTraceMultiForObjects(GetWorld(), Start, End, SphereRadius,
 			CollisionTraceType, false, IgnoredActorList,
 			temp_traceType, HitResult, true, FLinearColor::Red, FLinearColor::Green, DebugDuration);
 		break;
 	case EWeaponTraceType::CapsuleTrace:
-		//shape = FCollisionShape::MakeCapsule(CapsuleRadius, CapsuleHeight);
 		bHit = UKismetSystemLibrary::CapsuleTraceMultiForObjects(GetWorld(), Start, End, CapsuleRadius, CapsuleHeight,
 			CollisionTraceType, false, IgnoredActorList,
 			temp_traceType, HitResult, true, FLinearColor::Red, FLinearColor::Green, DebugDuration);
 
 		break;
 	case EWeaponTraceType::BoxTrace:
-		//shape = FCollisionShape::MakeBox(BoxHalfSize);
 		bHit = UKismetSystemLibrary::BoxTraceMultiForObjects(GetWorld(), Start, End, BoxHalfSize, FQuat::Identity.Rotator(),
 			CollisionTraceType, false, IgnoredActorList,
 			temp_traceType, HitResult, true, FLinearColor::Red, FLinearColor::Green, DebugDuration);
@@ -162,21 +125,12 @@ void ABP_WeaponBase::Trace(FVector BeginPoint, FVector EndPoint, EWeaponTraceTyp
 	default:
 		break;
 	}
-	//Just for sweephit example only
-	/*bHit = GetWorld()->SweepMultiByChannel(HitResult, Start, End, FQuat::FindBetweenVectors(Start, End),
-		ECC_Pawn, shape, TraceParams,
-		FCollisionResponseParams::DefaultResponseParam);*/
-
-		/*if (DebugDuration > 0.0f)
-		{
-			DrawDebugTrace(BeginPoint, EndPoint, traceType);
-		}*/
-
+	
 	if (bHit) {
 
 		for (int i = 0; i < HitResult.Num(); i++)
 		{
-			//	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Purple, HitResult[i].GetActor()->GetName());
+
 			if (HitResult[i].GetActor() && !IgnoredActorList.Contains(HitResult[i].GetActor()) && HitResult[i].GetActor()->ActorHasTag(TraceTag)) {
 
 				AGodsArenaCharacter* temp_HitChar = Cast<AGodsArenaCharacter>(HitResult[i].GetActor());
@@ -195,15 +149,29 @@ void ABP_WeaponBase::Trace(FVector BeginPoint, FVector EndPoint, EWeaponTraceTyp
 				float temp_damageToApply = FMath::RandRange(attribute.MinDamage, attribute.MaxDamage);
 				UGodArenaFunctionLibrary::ApplyDamage(GetParentActor(), HitResult[i].GetActor(), temp_damageToApply, attribute.debuff);
 
-
-
-
-
-
 			}
 
 		}
 	}
+
+}
+
+void ABP_WeaponBase::ExtendTraceLength(const FVector& ExtendedLength)
+{
+	EndWeaponTracePoint->SetRelativeLocation(OriginalEndPointVec + ExtendedLength);
+	
+}
+
+void ABP_WeaponBase::EndTraceTick(FTimerHandle EndTimerHandle)
+{
+	if (GetWorld()->GetTimerManager().IsTimerActive(EndTimerHandle)) {
+
+		//
+		//GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, FString("Clear Success"));
+		GetWorld()->GetTimerManager().ClearTimer(EndTimerHandle);
+	}
+	IgnoredActorList.Empty();
+	OnWeaponEndTrace.Broadcast();
 
 }
 

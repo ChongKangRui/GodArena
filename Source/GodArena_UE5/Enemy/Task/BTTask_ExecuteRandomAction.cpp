@@ -8,11 +8,9 @@
 #include "../../Action/Action.h"
 #include "AIController.h"
 
-
 UBTTask_ExecuteRandomAction::UBTTask_ExecuteRandomAction()
 {
 	NodeName = TEXT("ExecuteRandomAction");
-
 }
 
 EBTNodeResult::Type UBTTask_ExecuteRandomAction::ExecuteTask(UBehaviorTreeComponent& owner_comp, uint8* node_memory)

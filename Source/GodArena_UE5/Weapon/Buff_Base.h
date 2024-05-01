@@ -38,15 +38,9 @@ public:
 	UPROPERTY(BlueprintAssignable, meta= (ToolTip = "Only called when this actor get destroyed"))
 	FOnBuff OnEndBuff;
 
-
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	FAttackBuff OriginalBuff;
-
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 };
